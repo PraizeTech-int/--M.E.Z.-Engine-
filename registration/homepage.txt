@@ -1,0 +1,73 @@
+if (isset($_SESSION['email'])) {
+Meaning:
+This line checks if the user is logged in by verifying if their email is saved in the session.
+
+$_SESSION['email']: This is like a temporary variable that stores the user's email after they log in.
+
+isset(...): This checks if it exists.
+
+If the email exists, then the user is considered logged in and the code inside the {} will run.
+
+
+
+
+
+$email = $_SESSION['email'];
+Meaning:
+This line saves the email from the session into a new variable called $email, so we can easily use it later.
+
+
+
+
+
+$query = mysqli_query($conn, "SELECT * FROM user WHERE email='$email'");
+Meaning:
+This line runs a MySQL query to get the user’s data from the database.
+
+mysqli_query(...): This sends a query to the database.
+
+$conn: This is the connection to the database (already created elsewhere).
+
+"SELECT * FROM user WHERE email='$email'": This asks the database to get everything ( * ) from the user table where the email matches the one from the session.
+
+So in plain English:
+
+"Look in the user table and find the person whose email is this one."
+
+
+
+
+
+while ($row = mysqli_fetch_array($query)) {
+Meaning:
+This goes through each result returned from the database.
+
+mysqli_fetch_array($query): This gets one row of data from the query results (e.g., firstName, lastName, etc.).
+
+while (...): Even though there should only be one match (because emails are usually unique), we use a loop to handle the result.
+
+So this line says:
+
+"For each row we got from the database, do the following..."
+
+
+
+
+
+
+
+echo $row['firstName'] . ' ' . $row['lastName'];
+Meaning:
+This line displays the user’s first and last name.
+
+$row['firstName']: Gets the value of the firstName column from the row.
+
+$row['lastName']: Gets the value of the lastName column.
+
+.: This is used to join text in PHP.
+
+' ' adds a space between the first and last name.
+
+So it prints something like:
+"John Doe"
+

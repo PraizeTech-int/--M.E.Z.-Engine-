@@ -1,0 +1,168 @@
+✳️ SIGN UP SECTION:
+if (isset($_POST['signUp'])) {
+👉 This checks: Did the user click the "Sign Up" button?
+(Meaning: Is there a form submission with a button named signUp?)
+
+
+
+
+$firstName = $conn->real_escape_string($_POST['fName']);
+$lastName = $conn->real_escape_string($_POST['lName']);
+$email = $conn->real_escape_string($_POST['email']);
+$password = md5($_POST['password']);
+👉 These lines collect the input from the form:
+
+$_POST['fName']: Gets the first name from the form.
+
+$_POST['lName']: Gets the last name.
+
+$_POST['email']: Gets the email.
+
+$_POST['password']: Gets the password and converts it to a hashed format using md5() (note: not secure, we’ll fix that later).
+
+👉 real_escape_string() is used to clean the data, to protect from SQL injection (a type of hacking).
+
+
+
+
+
+$checkEmail = "SELECT * FROM user WHERE email='$email'";
+$result = $conn->query($checkEmail);
+👉 This checks if the email is already used:
+
+It looks inside the user table in the database to see if there is already someone with that email.
+
+$result will hold the outcome.
+
+
+
+
+
+
+
+
+if ($result->num_rows > 0) {
+    echo "Email Address Already Exists!";
+}
+👉 If the query finds one or more users with that email:
+
+It tells the user: "Email already exists" and stops.
+
+
+
+
+
+
+else {
+    $insertQuery = "INSERT INTO user (firstName, lastName, email, password)
+                    VALUES ('$firstName', '$lastName', '$email', '$password')";
+👉 If no one has used the email yet:
+
+This line creates a command to save the new user into the database.
+
+
+
+
+
+
+
+    if ($conn->query($insertQuery) === TRUE) {
+        header("Location: index.php");
+        exit();
+    }
+👉 If the saving is successful:
+
+Redirect the user to index.php (usually a login or welcome page).
+
+exit() makes sure the rest of the code doesn’t run after redirecting.
+
+
+
+
+
+
+
+    else {
+        echo "Error: " . $conn->error;
+    }
+}
+👉 If the database insert fails for any reason:
+
+Show the error to the user.
+
+
+
+
+
+
+
+
+✳️ SIGN IN SECTION:
+
+
+if (isset($_POST['signIn'])) {
+👉 This checks: Did the user click the "Sign In" button?
+
+
+
+
+
+$email = $conn->real_escape_string($_POST['email']);
+$password = md5($_POST['password']);
+👉 This collects the email and password from the form.
+The password is again hashed using md5() to match the one saved in the database.
+
+
+
+
+$sql = "SELECT * FROM user WHERE email='$email' AND password='$password'";
+$result = $conn->query($sql);
+👉 This searches the database:
+
+For a user whose email and password match the one the user entered.
+
+
+
+
+
+
+
+if ($result->num_rows > 0) {
+👉 If a matching user is found:
+
+
+
+
+
+
+
+    session_start();
+👉 Start a session (a way to remember the user while they're on the website).
+
+
+
+
+
+    $row = $result->fetch_assoc();
+    $_SESSION['email'] = $row['email'];
+👉 Save the user's email into a session so we can identify them on other pages.
+
+
+
+
+
+
+
+    header("Location: homepage.php");
+    exit();
+👉 Send the user to the homepage after login is successful.
+
+
+
+
+
+} else {
+    echo "Incorrect Email or Password!";
+}
+👉 If login fails, show a message: “Incorrect Email or Password!”
+
